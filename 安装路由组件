@@ -1,0 +1,10 @@
+
+
+npm install vue-router
+
+一、使用路由
+在你写的router文件中，需要明确安装路由功能：
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+
+Vue.use(VueRouter)

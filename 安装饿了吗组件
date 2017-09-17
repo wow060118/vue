@@ -1,0 +1,11 @@
+1进入刚刚生成的项目目录中，
+安装element-ui
+
+npm i element-ui -S
+
+2在main.js中，
+
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-default/index.css'
+
+Vue.use(ElementUI)
