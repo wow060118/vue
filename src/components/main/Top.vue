@@ -19,6 +19,7 @@
         <router-link to="login"><img border=0 name=img_cart
                                               src="../../../static/images/login.gif">
         </router-link>
+
         <img border=0 src="../../../static/images/separator.gif">
         <router-link to="reg"><img border=0 name=img_cart
                                             src="../../../static/images/reg.gif">
