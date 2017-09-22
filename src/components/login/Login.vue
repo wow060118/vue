@@ -12,8 +12,8 @@
               <el-input type="text" v-model="form1.username"
                         auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="密码" prop="pass">
-              <el-input type="password" v-model="form1.pass"
+            <el-form-item label="密码" prop="password">
+              <el-input type="password" v-model="form1.password"
                         auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item>
@@ -27,6 +27,10 @@
   </el-row>
 </template>
 <script>
+  import axios from 'axios'
+  import Vue from 'vue'
+  Vue.prototype.$http = axios
+  const LOGIN_URL = 'http://localhost:8083/user/login/'
   export default {
     data () {
       var validatePass = (rule, value, callback) => {
@@ -49,7 +53,7 @@
           password: ''
         },
         rules2: {
-          pass: [
+          password: [
             {validator: validatePass, required: true, trigger: 'blur'}
           ],
           username: [
@@ -60,9 +64,29 @@
     },
     methods: {
       login (formName) {
+        // var that = this
         this.$refs[formName].validate((valid) => {
+          const user = {
+            username: '',
+            password: ''
+          }
+          user.username = this.form1.username
+          user.password = this.form1.password
+          alert(user)
           if (valid) {
-            alert('submit!')
+            // alert(user.username)
+            this.$http({
+              method: 'POST',
+              url: LOGIN_URL + user.username + '/' + user.password + '/'
+              // data: user
+            }).then(function (resp) {
+              if (resp.status === 200) {
+                console.log('success!')
+              }
+            })
+              .catch(function (resp) {
+                console.log('errorQQQ')
+              })
           } else {
             console.log('error submit!!')
             return false
