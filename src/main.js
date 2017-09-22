@@ -3,9 +3,7 @@ import App from './App'
 import router from './router/router.js'    // 这里引入的是router目录，会默认识别里面的index.js文件（不能是其他名字）
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-default/index.css'
-// 引入并使用vue-resource网络请求模块
-import VueResource from 'vue-resource'
-Vue.use(VueResource)
+
 Vue.use(ElementUI)
 /* eslint-disable no-new */
 // 必须这么声明，使用路由

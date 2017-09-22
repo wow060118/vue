@@ -21,13 +21,6 @@
               <el-button @click="resetForm('form1')">重置</el-button>
             </el-form-item>
           </el-form>
-          <el-alert v-if="failed"
-            :closable="false"
-            title="登录失败了！"
-            type="error"
-            description="你要搞事情，难道你要非法入侵！"
-            show-icon>
-          </el-alert>
         </div>
       </el-card>
     </el-col>
@@ -66,43 +59,36 @@
           username: [
             {validator: validateUsername, required: true, trigger: 'blur'}
           ]
-        },
-        failed: false // 是否显示登录失败提示框
+        }
       }
     },
     methods: {
       login (formName) {
-        const that = this // 必须这么写，把当前对象 放到thar中 进入到内部函数时 仍然可以使用this
-        const user = {
-          username: '',
-          password: ''
-        }
+        // var that = this
         this.$refs[formName].validate((valid) => {
+          const user = {
+            username: '',
+            password: ''
+          }
+          user.username = this.form1.username
+          user.password = this.form1.password
           if (valid) {
-            that.failed = false
-            // axios ajax的登录
-            user.username = this.form1.username
-            user.password = this.form1.password
+            // alert(user.username)
             this.$http({
-              method: 'post',
-              url: LOGIN_URL,
-              data: user
+              method: 'POST',
+              url: LOGIN_URL, // + user.username + '/' + user.password + '/'
+              data: {
+                username: 'weikun',
+                pasword: '119'
+              }
             }).then(function (resp) {
-              if (resp.status === 200) { // 登录成功
-                // 放入localstorage
-                that.$notify({
-                  title: '消息',
-                  type: 'success',
-                  message: user.username + '登录成功！'
-                })
-                localStorage.setItem('user', user.username)
-                that.$router.push({ path: '/splash' })
+              if (resp.status === 200) {
+                console.log('success!')
               }
             })
-            .catch(function (response) {
-              alert(response)
-              that.failed = true
-            })
+              .catch(function (resp) {
+                console.log('errorQQQ')
+              })
           } else {
             console.log('error submit!!')
             return false
@@ -111,7 +97,6 @@
       },
       resetForm (formName) {
         this.$refs[formName].resetFields()
-        this.failed = false
       }
     }
   }
