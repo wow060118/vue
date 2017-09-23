@@ -42,8 +42,9 @@
 
             <el-form-item label="喜欢的宠物" prop="cate">
               <el-select v-model="form1.cate" placeholder="请选择宠物">
-                <el-option label="猴" value="mon"></el-option>
-                <el-option label="蛇" value="snake"></el-option>
+                <el-option v-for="o in cates" :value="o.catid" :key="o.catid" :label="o.name">
+                  {{o.name}}
+                </el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -51,6 +52,13 @@
               <el-button @click="resetForm('form1')">重置</el-button>
             </el-form-item>
           </el-form>
+          <el-alert v-if="failed"
+                    :closable="false"
+                    title="注册失败了！"
+                    type="error"
+                    description="你真蠢！"
+                    show-icon>
+          </el-alert>
         </div>
       </el-card>
 
@@ -64,6 +72,7 @@
   import Vue from 'vue'
   Vue.prototype.$http = axios
   const QUERY_CATEGORY_ALL = 'http://localhost:8083/user/category/'
+  const REG_URL = 'http://localhost:8083/user/reg/'
   export default {
     mounted () { // 挂载之后执行
       this.queryCategory()
@@ -126,6 +135,8 @@
         }
       }
       return {
+        failed: false,
+        cates: [],
         form1: {
           username: '',
           pass: '',
@@ -163,20 +174,52 @@
     },
     methods: {
       queryCategory () {
+        var that = this
         this.$http({
           method: 'GET',
           url: QUERY_CATEGORY_ALL
         }).then(function (resp) {
           if (resp.status === 200) { // 登录成功
-            console.log(123)
+            that.cates = resp.data
           }
         })
-          .catch(function (response) {})
+          .catch(function (response) {
+            that.failed = true
+          })
       },
       submitForm (formName) {
+        var that = this
+        const user = {
+          username: that.form1.username,
+          password: that.form1.pass,
+          email: that.form1.email,
+          xm: that.form1.xm,
+          address: that.form1.address,
+          profile: {
+            username: that.form1.username,
+            catid: that.form1.cate,
+            lang: that.form1.lang
+          }
+        }
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            alert('submit!')
+            this.$http({
+              method: 'POST',
+              url: REG_URL,
+              data: user
+            }).then(function (resp) {
+              if (resp.status === 200) {
+                console.log(resp.status)
+                that.failed = false
+                that.$notify({
+                  title: '成功',
+                  message: '注册成功！',
+                  type: 'success'
+                })
+                that.$router.push({ path: '/login' })
+              }
+            })
+              .catch(function (response) {})
           } else {
             console.log('error submit!!')
             return false
