@@ -60,7 +60,14 @@
 
 </template>
 <script>
+  import axios from 'axios'
+  import Vue from 'vue'
+  Vue.prototype.$http = axios
+  const QUERY_CATEGORY_ALL = 'http://localhost:8083/user/category/'
   export default {
+    mounted () { // 挂载之后执行
+      this.queryCategory()
+    },
     data () {
       var validatePass = (rule, value, callback) => {
         if (value === '') {
@@ -155,6 +162,17 @@
       }
     },
     methods: {
+      queryCategory () {
+        this.$http({
+          method: 'GET',
+          url: QUERY_CATEGORY_ALL
+        }).then(function (resp) {
+          if (resp.status === 200) { // 登录成功
+            console.log(123)
+          }
+        })
+          .catch(function (response) {})
+      },
       submitForm (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {

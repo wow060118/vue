@@ -34,6 +34,7 @@
   </el-row>
 </template>
 <script>
+  import bus from '../../assets/eventBus'
   import axios from 'axios'
   import Vue from 'vue'
   Vue.prototype.$http = axios
@@ -95,12 +96,11 @@
                   type: 'success',
                   message: user.username + '登录成功！'
                 })
-                localStorage.setItem('user', user.username)
+                bus.$emit('userSuccessFlag', user.username)// login组件和top组件传输
                 that.$router.push({ path: '/splash' })
               }
             })
             .catch(function (response) {
-              alert(response)
               that.failed = true
             })
           } else {
