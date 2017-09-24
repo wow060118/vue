@@ -43,16 +43,23 @@
           type: 'warning'
         }).then(() => {
           that.init()
-          for (var i = 1; i <= 1000; i++) { // 科里化，对i进行值得锁定
-            (function (i) {
-              setTimeout(function () {
-                that.per = i / 10
-              }, 1000)
-            })(i)
-            if (i === 1000) {
-              this.$router.push({path: '/splash'})
+//          for (var i = 1; i <= 1000; i++) { // 科里化，对i进行值得锁定
+//            (function (i) {
+//              setTimeout(function () {
+//                that.per = i / 10
+//              }, 1000)
+//            })(i)
+//            if (i === 1000) {
+//              this.$router.push({path: '/splash'})
+//            }
+//          }
+          var perround = setInterval(function () {
+            that.per = that.per + 1
+            if (that.per === 100) {
+              clearInterval(perround)
+              that.$router.push({path: '/splash'})
             }
-          }
+          }, Math.random() * 50)
           this.$message({
             type: 'success',
             message: '初始化成功!'

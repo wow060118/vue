@@ -23,13 +23,13 @@ const router = new Router({
       path: '/reg', component: Register
     },
     {
-      path: '/pro', component: Product
+      path: '/pro/:id', component: Product
     },
     {
-      path: '/items', component: Items
+      path: '/items/:pid', component: Items
     },
     {
-      path: '/item', component: Item
+      path: '/item/:pid/:iid', component: Item
     },
     {
       path: '/cart', component: Cart
