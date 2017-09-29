@@ -42,7 +42,7 @@
 //  const GETSESSION_URL = 'http://localhost:8083/user/get/'
   export default {
     watch: { // 监听路由的变化
-      // 如果路由有变化，会再次执行该方法
+      // 如果路由有变化，会再次执行该方法000
       '$route' (to, from) {
         this.username = localStorage.getItem('username') == null ? '游客' : '' + localStorage.getItem('username') + ''
       }
