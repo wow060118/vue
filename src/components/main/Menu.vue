@@ -62,20 +62,18 @@
       },
       logout () {
         var that = this
-        that.localStorage.removeItem('username')
+        localStorage.removeItem('username')
         this.$http({
           method: 'GET',
           url: LOGOUT_URL
         }).then(function (resp) {
-          if (resp.status === 200) { // 登录成功
-            // 放入localstorage
-            // bus.$emit('userSuccessFlag', user.username)// login组件和top组件传输
-            that.$notify({
+          if (resp.status === 200) {
+            that.$notify({ // 放入localstorage
               title: '消息',
               type: 'success',
               message: '系统已经注销！'
             })
-            bus.$emit('userSuccessFlag', '游客')// login组件和top组件传输
+            bus.$emit('userSuccessFlag', '游客')// login组件和top组件传输, 防止在splash点击logout时，会没有反应
             that.$router.push({ path: '/splash' })
           }
         })

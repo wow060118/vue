@@ -37,24 +37,28 @@
 <script>
   import axios from 'axios'
   import Vue from 'vue'
+  import bus from '../../assets/eventBus'
   Vue.prototype.$http = axios
 //  const GETSESSION_URL = 'http://localhost:8083/user/get/'
   export default {
     watch: { // 监听路由的变化
       // 如果路由有变化，会再次执行该方法
       '$route' (to, from) {
-        this.username = localStorage.getItem('username')
+        this.username = localStorage.getItem('username') == null ? '游客' : '' + localStorage.getItem('username') + ''
       }
     },
-    mounted () {
-      this.username = this.localStorage.getItem('username')
-      alert(123)
+    created () { // 组件已经创建完毕 属性已经完毕 dom属性还未生成
+      var that = this
+      bus.$on('userSuccessFlag', function (msg) {
+        that.username = msg
+      })
+      this.username = localStorage.getItem('username') == null ? '游客' : '' + localStorage.getItem('username') + ''
     },
     data () {
       return {
         activeIndex: '1',
         activeIndex2: '1',
-        username: '游客'
+        username: ''
       }
     },
     methods: {

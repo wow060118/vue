@@ -47,20 +47,19 @@ const router = new Router({
 
 router.beforeEach(({ meta, path }, from, next) => {
   if (path !== 'login') {
-    if (path.toString().indexOf('init') > 0 || path.toString().indexOf('cart') > 0) {
-      console.log(888)
-      axios({
-        method: 'GET',
-        url: GETSESSION_URL
-      }).then(function (resp) {
-        if (resp.status === 200) {
-          next()
+    axios({
+      method: 'GET',
+      url: GETSESSION_URL
+    }).then(function (resp) {
+      if (resp.status === 200) {
+        next()
+      }
+    })
+      .catch(function (response) {
+        if (path.toString().indexOf('init') > 0 || path.toString().indexOf('cart') > 0) {
+          return next({ path: '/login' })
         }
       })
-        .catch(function (response) {
-          return next({ path: '/login' })
-        })
-    }
     next()
   }
 })
