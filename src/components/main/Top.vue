@@ -37,28 +37,18 @@
 <script>
   import axios from 'axios'
   import Vue from 'vue'
-  import bus from '../../assets/eventBus'
   Vue.prototype.$http = axios
 //  const GETSESSION_URL = 'http://localhost:8083/user/get/'
   export default {
-    watch: { // 监听路由变化
+    watch: { // 监听路由的变化
+      // 如果路由有变化，会再次执行该方法
       '$route' (to, from) {
-        var that = this
-        bus.$on('userSuccessFlag', function (msg) { // 取另个控件的值
-          that.username = msg
-//          that.$http({
-//            method: 'GET',
-//            url: GETSESSION_URL
-//          }).then(function (resp) {
-//            if (resp.status === 200) { // 取session成功
-//              that.username = resp.data
-//            }
-//          })
-//            .catch(function (response) {
-//              that.failed = true
-//            })
-        })
+        this.username = localStorage.getItem('username')
       }
+    },
+    mounted () {
+      this.username = this.localStorage.getItem('username')
+      alert(123)
     },
     data () {
       return {

@@ -62,6 +62,7 @@
       },
       logout () {
         var that = this
+        that.localStorage.removeItem('username')
         this.$http({
           method: 'GET',
           url: LOGOUT_URL

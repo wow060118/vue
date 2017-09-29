@@ -22,7 +22,7 @@
             </el-col>
             <el-col :span="16">
               <div class="grid-content" align="left">产品数量：
-                <input id="colorful" type="number" value="1" min="1" max="10"/>
+                <input id="colorful" type="number" value="1" min="1" max="10"  ref="quantity"/>
               </div>
             </el-col>
             <el-col :span="24">
@@ -69,13 +69,12 @@
 
 <script>
   import axios from 'axios'
+  import bus from '../../assets/eventBus'
   import Vue from 'vue'
   Vue.prototype.$http = axios
   const PET_QUERY_URL = 'http://localhost:8083/pet/query/'
+  const ADD_CART = 'http://localhost:8083/cart/add/'
   export default {
-    watch: {// 路由发生改变
-      '$route': 'init'
-    },
     mounted () { // 加载完比组件 之后立刻执行
       this.init()
     },
@@ -84,6 +83,11 @@
         this.pid = this.$route.params.pid
         this.iid = this.$route.params.iid
         var that = this
+        bus.$on('userSuccessFlag', function (msg) { // 取另个控件的值
+          that.username = msg
+          alert(that.username)
+        })
+        this.setlo
         this.$http({
           method: 'POST',
           url: PET_QUERY_URL,
@@ -101,11 +105,30 @@
       },
       buy () {
         console.log('buy')
-        this.$router.push('/cart') // 鼠标点击进入某个页
+        // 看是否登录，才能进入购物车
+        this.$router.push({ path: '/cart' })
+       // var that = this
+        var cart = {
+          itemid: this.item[0].itemid,
+          orderid: '',
+          quantity: this.$refs.quantity.value,
+          username: localStorage.getItem('username')
+        }
+        this.$http({
+          method: 'POST',
+          url: ADD_CART,
+          data: cart
+        }).then(function (resp) {
+          if (resp.status === 200) { // 增加购物车成功
+            console.log(123)
+          }
+        })
+          .catch(function (response) {})
       }
     },
     data () {
       return {
+        username: '',
         pid: '',
         iid: '',
         currentDate: new Date(),
