@@ -106,11 +106,11 @@
       buy () {
         console.log('buy')
         // 看是否登录，才能进入购物车
-        this.$router.push({ path: '/cart' })
-       // var that = this
+        var that = this
         var cart = {
           itemid: this.item[0].itemid,
           orderid: '',
+          productid: this.item[0].productid,
           quantity: this.$refs.quantity.value,
           username: localStorage.getItem('username')
         }
@@ -120,7 +120,7 @@
           data: cart
         }).then(function (resp) {
           if (resp.status === 200) { // 增加购物车成功
-            console.log(123)
+            that.$router.push({ path: '/cart' })
           }
         })
           .catch(function (response) {})

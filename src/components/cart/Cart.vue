@@ -95,8 +95,32 @@
 </template>
 
 <script>
+  import axios from 'axios'
+  import Vue from 'vue'
+  Vue.prototype.$http = axios
+  const QUERY_CART_URL = 'http://localhost:8083/cart/query/'
   export default {
+    mounted () {
+      this.init()
+    },
     methods: {
+      init () {
+        // const that = this
+        const username = localStorage.getItem('username')
+        this.$http({
+          method: 'get',
+          url: QUERY_CART_URL + username + '/'
+        }).then(function (resp) {
+          if (resp.status === 200) {
+            console.log(resp.data)
+            // that.carts = resp.data
+            // that.comTotal()
+          }
+        })
+          .catch(function (response) {
+            console.log('error')
+          })
+      },
       handleClick () {
         console.log(1)
       },
