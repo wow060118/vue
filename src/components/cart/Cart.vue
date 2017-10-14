@@ -23,38 +23,46 @@
             width="110">
           </el-table-column>
           <el-table-column
-            prop="descn"
+            prop="item.product.descn"
             label="产品描述"
             width="260">
           </el-table-column>
           <el-table-column
             width="170"
-            prop="pic"
+
             label="产品照片">
+            <template scope="scope">
+              <img :src="'../../../static/images/'+scope.row.item.product.pic">
+            </template>
           </el-table-column>
           <el-table-column
             width="100"
-            prop="listprice"
+            prop="item.listprice"
             label="单价">
           </el-table-column>
           <el-table-column
             width="90"
             prop="quantity"
             label="数量">
+            <template scope="scope">
+              <input type="number" :value="scope.row.quantity" v-model="carts[scope.$index].quantity"
+                     min="1" max="10" @change="change(scope.row,scope.$index)"/>
+            </template>
           </el-table-column>
           <el-table-column
             width="160"
-            prop="sum"
             label="合计">
+            <template scope="scope">
+              {{scope.row.item.listprice*scope.row.quantity}}元
+            </template>
           </el-table-column>
           <el-table-column
             fixed="right"
             label="操作"
             width="100">
             <template scope="scope">
-              <router-link :to="{path:'/../../item/'+scope.row.productid+'/'+scope.row.itemid}">
-                <el-button type="text" size="small">明细</el-button>
-              </router-link>
+                <el-button type="text" size="small" @click="del(scope.row)">删除</el-button>
+
             </template>
           </el-table-column>
         </el-table>
@@ -75,7 +83,7 @@
       </el-col>
       <el-col :span="20" align="right">
 
-        <h3>总计:199元</h3>
+        <h3>总计: {{total}}元</h3>
       </el-col>
       <el-col :span="3" align="right">
 
@@ -99,13 +107,62 @@
   import Vue from 'vue'
   Vue.prototype.$http = axios
   const QUERY_CART_URL = 'http://localhost:8083/cart/query/'
+  const DEL_CART_URL = 'http://localhost:8083/cart/del/'
+  const UPDATE_CART_URL = 'http://localhost:8083/cart/update/'
+  const CHECK_OUT = 'http://localhost:8083/cart/checkout/'
   export default {
     mounted () {
       this.init()
     },
     methods: {
+      change (row, index) {
+        this.cart.username = localStorage.getItem('username')
+        this.cart.orderid = row.orderid
+        this.cart.itemid = row.item.itemid
+        this.cart.productid = row.item.product.productid
+        console.log(this.carts[index].quantity)
+        this.cart.quantity = this.carts[index].quantity
+        const that = this
+        this.$http({
+          method: 'put',
+          data: that.cart,
+          url: UPDATE_CART_URL
+        }).then(function (resp) {
+          if (resp.status === 200) {
+            console.log(resp.data)
+            that.carts = resp.data
+            that.comTotal()
+          }
+        })
+          .catch(function (response) {
+            console.log('error')
+          })
+      },
+      del (row) {
+        const that = this
+        this.$http({
+          method: 'delete',
+          url: DEL_CART_URL + row.orderid + '/' + row.username + '/' + row.itemid + '/' + row.productid + '/'
+        }).then(function (resp) {
+          if (resp.status === 200) {
+            console.log(resp.data)
+            that.carts = resp.data
+            that.comTotal()
+          }
+        })
+          .catch(function (response) {
+            console.log('error')
+          })
+      },
+      comTotal () { // 计算总计
+        var sum = 0
+        for (var i in this.carts) {
+          sum += this.carts[i].item.listprice * this.carts[i].quantity
+        }
+        this.total = sum
+      },
       init () {
-        // const that = this
+        const that = this
         const username = localStorage.getItem('username')
         this.$http({
           method: 'get',
@@ -113,8 +170,8 @@
         }).then(function (resp) {
           if (resp.status === 200) {
             console.log(resp.data)
-            // that.carts = resp.data
-            // that.comTotal()
+            that.carts = resp.data
+            that.comTotal()
           }
         })
           .catch(function (response) {
@@ -125,6 +182,21 @@
         console.log(1)
       },
       checkout () {
+        this.orders.orderid = this.carts[0].orderid
+        this.orders.username = localStorage.getItem('username')
+        this.orders.totalprice = this.total
+        this.$http({
+          method: 'post',
+          data: this.orders,
+          url: CHECK_OUT
+        }).then(function (resp) {
+          if (resp.status === 200) {
+            console.log(resp.data)
+          }
+        })
+          .catch(function (response) {
+            console.log('error')
+          })
         this.$router.push('/')
       },
       tableRowClassName (row, index) {
@@ -139,14 +211,37 @@
 
     data () {
       return {
+        total: 0,
+        orders: {
+          orderid: '',
+          username: '',
+          totalprice: ''
+        },
+        cart: {
+          quantity: '',
+          username: '',
+          item: {
+            itemid: '',
+            productid: ''
+          },
+          orderid: ''
+        },
         carts: [{
-          itemid: 'EST',
-          productid: 'p_001',
-          descn: '上海市普陀区金沙江路 1518 弄',
-          pic: '王小虎',
-          listprice: '20',
-          quantity: '8',
-          sum: '666'
+          item: {
+            itemid: '',
+            listprice: '',
+            product: {
+              productid: '',
+              descn: '',
+              pic: ''
+            }
+          },
+          itemid: '',
+          productid: '',
+          orderid: '',
+          quantity: '',
+          username: '',
+          sum: ''
         }]
       }
     }
@@ -156,10 +251,7 @@
   .el-table .info-row {
     background: #c9e5f5;
   }
-
   .el-table .positive-row {
     background: #e2f0e4;
   }
-
-
 </style>

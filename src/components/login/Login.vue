@@ -97,6 +97,7 @@
                   message: user.username + '登录成功！'
                 })
                 //  bus.$emit('userSuccessFlag', user.username)// login组件和top组件传输
+                console.log(user.username)
                 localStorage.setItem('username', user.username)
                 that.$router.push({ path: '/splash' })
               }
