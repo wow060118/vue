@@ -21,6 +21,11 @@
         </router-link>
 
         <img border=0 src="../../../static/images/separator.gif">
+
+        <router-link to=""><img border=0 name=img_cart
+                                     src="../../../static/images/out.gif">
+        </router-link>
+        <img border=0 src="../../../static/images/separator.gif">
         <router-link to="reg"><img border=0 name=img_cart
                                    src="../../../static/images/reg.gif">
           <img border=0 src="../../../static/images/separator.gif">

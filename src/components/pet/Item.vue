@@ -107,6 +107,10 @@
         console.log('buy')
         // 看是否登录，才能进入购物车
         var that = this
+        var username = localStorage.getItem('username')
+        if (username == null) {
+          that.$router.push({ path: '/login' })
+        }
         var cart = {
           itemid: this.item[0].itemid,
           orderid: '',
