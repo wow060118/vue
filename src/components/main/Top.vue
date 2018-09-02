@@ -8,7 +8,7 @@
         </a>
       </td>
       <td>
-        <h2 align="center" style="color: #FFFFFF">欢迎【{{username}}】来到易圣通宠物商店</h2>
+        <h2 align="center" style="color: #FFFFFF">欢迎【{{username}}】来到宠物商店</h2>
       </td>
       <td align="right">
         <router-link to="cart">
